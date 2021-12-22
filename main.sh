@@ -1,59 +1,49 @@
-case "$#" in
-  2) loop=$2
-     wait_time=1
-  ;;
-  3) loop=$2
-     wait_time=$3
-  ;;
-  *) loop=5
-     wait_time=1
-esac
+# 足し算コマンドの仕様書
+# ＝＝＝＝＝＝＝＝＝＝＝
+# コマンド $1 $2 $3
+# $1->桁数
+# $2->問題数(何口)
+# $3->待機時間
+# ＝＝＝＝＝＝＝＝＝＝＝
 
-help(){
-  echo 'そろばん練習用のコマンドです。\n$1のオプション一覧\n足し算:-p\n掛け算:-m\n割り算:-d\nヘルプ:-h\n$2のオプションでは問題数を指定します。\n例:./main.sh -p 10→足し算練習を10口で開始\n*$2を選択しないとデフォルトの5口になります'
-}
-plus(){
-  sum=0
-  sentence_1="円なり"
-  sentence_2="合わせて"
-  echo "御破算で願いましては"
-  say "ごはさんでねがいましては"
-  for i in `seq 1 $loop`
-  do
-    dice=$((RANDOM%100+1))
-    echo $dice$sentence_1
-    say $dice$sentence_1
-    sleep $wait_time
-    sum=$(($sum+$dice))
-  done
-  echo "答えを入力"
-  read answer
-  if test $answer -eq $sum ; then
-    echo "御明算"
-    say "ごめいさん"
-  else
-    echo "不正解"
-    echo "$sentence_2$sum$sentence_1"
-    say "$sentence_2$sum$sentence_1"
-  fi
-}
-multiplier(){
-  echo "掛け算の関数が呼び出されました!"
-}
-abteilung(){
-  echo "割り算の関数が呼び出されました!"
-}
-case "$1" in
-    "-p") plus
-    ;;
-    "-m") multiplier
-    ;;
-    "-d") abteilung
-    ;;
-    "-h") help
-    ;;
-    "") help
-    ;;
-    *) echo "該当のオプションはありません"
-    ;;
+# 環境設定のコード
+case "$#" in
+  0) digit=2
+     qty=5
+     latency=0
+  ;;
+  1) digit=$1
+     qty=5
+     latency=0
+  ;;
+  2) digit=$1
+     qty=$2
+     latency=0
+  ;;
+  3) digit=$1
+     qty=$2
+     latency=$3
+  ;;
+  *) echo "オプションを確認してください"
+     exit
+  ;;
 esac
+min=$((10**($digit-1)))
+max=$((10**($digit)-1))
+str1="円なり"
+str2="合わせて"
+sum=0
+
+#プログラムの実行コード
+echo "ご破産で願いましては!"
+say "ゴハサンデネガイマシテワ"
+for ((i=1; i<=$qty; i++))
+do
+  dice=$(seq $min $max| shuf| head -n 1)
+  echo "$dice$str1"
+  say "$dice$str1"
+  sum=$(($dice+$sum))
+  sleep $latency
+done
+echo $str2$sum$str1
+say $str2$sum$str1
